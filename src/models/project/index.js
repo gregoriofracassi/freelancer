@@ -10,6 +10,10 @@ const ProjectSchema = new Schema({
     type: String,
     required: true,
   },
+  category: {
+    type: String,
+    required: true,
+  },
   employer: {
     type: Schema.Types.ObjectId,
     ref: "User",
