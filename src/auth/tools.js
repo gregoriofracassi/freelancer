@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken"
-//  import { promisify } from "util"
 
 export const JWTAuthenticate = async (user) => {
   const accessToken = await generateJWT({ _id: user._id })
