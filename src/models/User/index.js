@@ -14,27 +14,45 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  about: {
+    type: String,
+    required: true,
+  },
   password: {
     type: String,
     required: true,
   },
-  skills: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
   role: {
     type: String,
-    required: true,
     enum: ["Admin", "User"],
     default: "User",
   },
   avatar: {
     type: String,
-    required: true,
     default: "https://image.flaticon.com/icons/png/512/5173/5173555.png",
   },
+  course: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Course",
+  },
+  uni: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Uni",
+  },
+  subjects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
+      default: [],
+    },
+  ],
+  availableSubjects: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
+      default: [],
+    },
+  ],
 })
 
 UserSchema.pre("save", async function (next) {

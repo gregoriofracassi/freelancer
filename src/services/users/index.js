@@ -66,7 +66,11 @@ usersRouter.get("/search", JWTAuthMiddleware, async (req, res, next) => {
 
 usersRouter.get("/:id", async (req, res, next) => {
   try {
-    const user = await UserModel.findById(req.params.id)
+    const user = await UserModel.findById(req.params.id).populate([
+      "course",
+      "uni",
+      "availableSubjects",
+    ])
     if (!user) next(createError(404, `ID ${req.params.id} was not found`))
     else res.status(200).send(user)
   } catch (error) {

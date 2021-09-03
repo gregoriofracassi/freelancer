@@ -1,9 +1,12 @@
 import cors from "cors"
 import express from "express"
 import usersRouter from "./services/users/index.js"
-import projectsRouter from "./services/projects/index.js"
-import bidsRouter from "./services/bids/index.js"
-import feedbacksRouter from "./services/feedbacks/index.js"
+import coursesRouter from "./services/courses/index.js"
+import subjectsRouter from "./services/subjects/index.js"
+import notesRouter from "./services/notes/index.js"
+import unisRouter from "./services/unis/index.js"
+import groupStudiesRouter from "./services/groupStudies/index.js"
+import tutorSessionsRouter from "./services/tutorSessions/index.js"
 import {
   badRequestErrorHandler,
   notFoundErrorHandler,
@@ -17,9 +20,12 @@ server.use(cors())
 server.use(express.json())
 
 server.use("/users", usersRouter)
-server.use("/projects", projectsRouter)
-server.use("/bids", bidsRouter)
-server.use("/feedbacks", feedbacksRouter)
+server.use("/unis", unisRouter)
+server.use("/courses", coursesRouter)
+server.use("/subjects", subjectsRouter)
+server.use("/tutorSessions", tutorSessionsRouter)
+server.use("/notes", notesRouter)
+server.use("/groupStudy", groupStudiesRouter)
 
 server.use(badRequestErrorHandler)
 server.use(notFoundErrorHandler)
