@@ -53,6 +53,9 @@ const UserSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  hourlyFee: {
+    type: Number,
+  },
 })
 
 UserSchema.pre("save", async function (next) {

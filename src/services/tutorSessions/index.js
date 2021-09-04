@@ -63,7 +63,7 @@ tutorSessionsRouter.put(
     try {
       const updateTutorSession = await TutorSessionModel.findByIdAndUpdate(
         req.params.id,
-        { $set: { student: req.user } },
+        { $set: { student: req.user, subject: req.body.subject } },
         {
           runValidators: true,
           new: true,
