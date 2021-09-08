@@ -49,20 +49,20 @@ usersRouter.get("/", async (req, res, next) => {
   }
 })
 
-usersRouter.get("/search", JWTAuthMiddleware, async (req, res, next) => {
-  console.log(req.query)
-  const { username } = req.query
-  try {
-    const users = await UserModel.find({ username })
+// usersRouter.get("/search", JWTAuthMiddleware, async (req, res, next) => {
+//   console.log(req.query)
+//   const { username } = req.query
+//   try {
+//     const users = await UserModel.find({ username })
 
-    if (users) {
-      res.status(200).send(users)
-    }
-    res.send(createError(404, "No user found"))
-  } catch (error) {
-    next(error)
-  }
-})
+//     if (users) {
+//       res.status(200).send(users)
+//     }
+//     res.send(createError(404, "No user found"))
+//   } catch (error) {
+//     next(error)
+//   }
+// })
 
 usersRouter.get("/:id", async (req, res, next) => {
   try {
@@ -80,9 +80,11 @@ usersRouter.get("/:id", async (req, res, next) => {
 
 usersRouter.put("/:id", async (req, res, next) => {
   try {
+    const user = await UserModel.findById(req.params.id)
+    const addition = req.body
     const updateUser = await UserModel.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      { ...user, addition },
       {
         runValidators: true,
         new: true,
