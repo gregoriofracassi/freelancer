@@ -54,6 +54,7 @@ const UserSchema = new mongoose.Schema({
   ],
   hourlyFee: {
     type: Number,
+    default: 0,
   },
 })
 
@@ -77,13 +78,10 @@ UserSchema.methods.toJSON = function () {
 
 UserSchema.statics.checkCredentials = async function (email, plainPw) {
   const user = await this.findOne({ email })
-  console.log(user)
   console.log("checking credentials...")
   if (user) {
     const hashedPw = user.password
-    console.log(hashedPw)
     const isMatch = await bcrypt.compare(plainPw, hashedPw)
-    console.log(isMatch)
 
     if (isMatch) {
       return user

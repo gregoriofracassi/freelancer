@@ -12,13 +12,10 @@ const usersRouter = Router()
 usersRouter.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body
-    console.log(email)
     const user = await UserModel.checkCredentials(email, password)
 
     if (user) {
-      console.log("credentials are fine")
       const accessToken = await JWTAuthenticate(user)
-      console.log("token", accessToken)
       res.send({ accessToken, userId: user._id })
     } else {
       next(createError(401))
@@ -81,10 +78,9 @@ usersRouter.get("/:id", async (req, res, next) => {
 usersRouter.put("/:id", async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.params.id)
-    const addition = req.body
     const updateUser = await UserModel.findByIdAndUpdate(
       req.params.id,
-      { ...user, addition },
+      { $set: { ...req.body } },
       {
         runValidators: true,
         new: true,

@@ -28,16 +28,20 @@ tutorSessionsRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
   }
 })
 
-tutorSessionsRouter.get("/:id", JWTAuthMiddleware, async (req, res, next) => {
-  try {
-    const tutorSession = await TutorSessionModel.findById(req.params.id)
-    if (!tutorSession)
-      next(createError(404, `ID ${req.params.id} was not found`))
-    else res.status(200).send(tutorSession)
-  } catch (error) {
-    next(error)
+tutorSessionsRouter.get(
+  "/individual_session/:id",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const tutorSession = await TutorSessionModel.findById(req.params.id)
+      if (!tutorSession)
+        next(createError(404, `ID ${req.params.id} was not found`))
+      else res.status(200).send(tutorSession)
+    } catch (error) {
+      next(error)
+    }
   }
-})
+)
 
 tutorSessionsRouter.get(
   "/byTutor/:id",
@@ -46,6 +50,23 @@ tutorSessionsRouter.get(
     try {
       const tutorSession = await TutorSessionModel.find({
         tutor: req.params.id,
+      })
+      if (!tutorSession)
+        next(createError(404, `ID ${req.params.id} was not found`))
+      else res.status(200).send(tutorSession)
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+tutorSessionsRouter.get(
+  "/byStudent/:id",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const tutorSession = await TutorSessionModel.find({
+        student: req.params.id,
       })
       if (!tutorSession)
         next(createError(404, `ID ${req.params.id} was not found`))
