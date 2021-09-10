@@ -50,7 +50,15 @@ tutorSessionsRouter.get(
     try {
       const tutorSession = await TutorSessionModel.find({
         tutor: req.params.id,
-      })
+      }).populate([
+        {
+          path: "student",
+          populate: { path: "uni" },
+        },
+        {
+          path: "subject",
+        },
+      ])
       if (!tutorSession)
         next(createError(404, `ID ${req.params.id} was not found`))
       else res.status(200).send(tutorSession)
@@ -67,7 +75,15 @@ tutorSessionsRouter.get(
     try {
       const tutorSession = await TutorSessionModel.find({
         student: req.params.id,
-      })
+      }).populate([
+        {
+          path: "tutor",
+          populate: { path: "uni" },
+        },
+        {
+          path: "subject",
+        },
+      ])
       if (!tutorSession)
         next(createError(404, `ID ${req.params.id} was not found`))
       else res.status(200).send(tutorSession)
