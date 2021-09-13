@@ -1,7 +1,9 @@
 import { Router } from "express"
 import createError from "http-errors"
 import NotesModel from "../../models/notes/index.js"
-import { JWTAuthenticate } from "../../auth/tools.js"
+import multer from "multer"
+import AWS from "aws-sdk"
+import { v4 as uuidv4 } from "uuid"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 
 const notesRouter = Router()
@@ -58,6 +60,51 @@ notesRouter.delete("/:id", JWTAuthMiddleware, async (req, res, next) => {
     const deleteNotes = await NotesModel.findByIdAndDelete(req.params.id)
     if (deleteNotes) res.status(201).send("Notes deleted")
     else next(createError(400, "Bad Request"))
+  } catch (error) {
+    next(error)
+  }
+})
+
+// ---------------upload notes pdf------------------
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ID,
+  secretAccessKey: process.env.AWS_SECRET,
+})
+
+const storage = multer.memoryStorage({
+  destination: function (req, file, callback) {
+    callback(null, "")
+  },
+})
+
+notesRouter.post("/upload", multer({ storage }).single("image"), (req, res) => {
+  let myFile = req.file.originalname.split(".")
+  const fileType = myFile[myFile.length - 1]
+
+  const params = {
+    Bucket: process.env.AWS_BUCKET_NAME,
+    Key: `${uuidv4()}.${fileType}`,
+    Body: req.file.buffer,
+  }
+
+  s3.upload(params, (error, data) => {
+    if (error) {
+      res.status(500).send(error)
+    }
+
+    res.status(200).send(data)
+  })
+})
+
+notesRouter.get("/download/:key", (req, res) => {
+  try {
+    const options = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: req.params.key,
+    }
+    const fileStream = s3.getObject(options).createReadStream()
+    fileStream.pipe(res)
   } catch (error) {
     next(error)
   }

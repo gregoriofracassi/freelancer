@@ -116,34 +116,32 @@ usersRouter.delete("/:id", async (req, res, next) => {
   }
 })
 
-//------------------------------------CLOUDINARY
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-})
 const cloudinaryStorage = new CloudinaryStorage({
   cloudinary,
-  params: { folder: "whatsapp" },
+  params: {
+    folder: "UniHub",
+  },
 })
-const upload = multer({
-  storage: cloudinaryStorage,
-}).single("image")
 
-usersRouter.post("/:id/upload", upload, async (req, res, next) => {
-  try {
-    const data = await UserModel.findByIdAndUpdate(
-      { _id: req.params.id },
-      { avatar: req.file.path },
-      { new: true, runValidators: true }
-    )
-    console.log(data)
-    if (data[0] === 1) res.send(data[1][0])
-    else res.status(404).send("ID not found")
-  } catch (error) {
-    console.log(error)
-    next(error.message)
+usersRouter.post(
+  "/:id/imageupload",
+  multer({ storage: cloudinaryStorage }).single("avatar"),
+  async (req, res, next) => {
+    try {
+      const user = await UserModel.findByIdAndUpdate(
+        req.params.id,
+        { avatar: req.file.path },
+        { runValidators: true, new: true }
+      )
+      if (user) {
+        res.send(user)
+      } else {
+        next(createError(404, { message: `user ${req.params.id} not found` }))
+      }
+    } catch (error) {
+      next(createError(500, "An error occurred while uploading user avatar"))
+    }
   }
-})
+)
 
 export default usersRouter
