@@ -11,6 +11,7 @@ const notesRouter = Router()
 notesRouter.post("/", JWTAuthMiddleware, async (req, res) => {
   try {
     const newNotes = new NotesModel(req.body)
+    newNotes.author = req.user
     const { _id } = await newNotes.save()
 
     res.status(201).send(_id)
@@ -65,7 +66,35 @@ notesRouter.delete("/:id", JWTAuthMiddleware, async (req, res, next) => {
   }
 })
 
-// ---------------upload notes pdf------------------
+notesRouter.get("/byAuthor/:id", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const notes = await NotesModel.find({
+      author: req.params.id,
+    })
+    if (!notes) next(createError(404, `ID ${req.params.id} was not found`))
+    else res.status(200).send(notes)
+  } catch (error) {
+    next(error)
+  }
+})
+
+notesRouter.get(
+  "/byPurchaser/:id",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const notes = await NotesModel.find({
+        purchasedBy: req.params.id,
+      })
+      if (!notes) next(createError(404, `ID ${req.params.id} was not found`))
+      else res.status(200).send(notes)
+    } catch (error) {
+      next(error)
+    }
+  }
+)
+
+// ---------------upload/download notes pdf------------------
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ID,

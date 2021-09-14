@@ -78,7 +78,10 @@ usersRouter.get("/specific/:id", async (req, res, next) => {
 usersRouter.get("/me", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.user._id).populate([
-      "course",
+      {
+        path: "course",
+        populate: { path: "subjects" },
+      },
       "uni",
       "availableSubjects",
     ])

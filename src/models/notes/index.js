@@ -1,27 +1,33 @@
 import mongoose from "mongoose"
 
-const NotesSchema = new mongoose.Schema({
-  course: {
-    type: mongoose.Schema.Types.ObjectId,
-    required: true,
-    ref: "Course",
+const NotesSchema = new mongoose.Schema(
+  {
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Course",
+    },
+    subject: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+    contentKey: {
+      type: String,
+    },
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    purchasedBy: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        default: [],
+      },
+    ],
   },
-  subject: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Course",
-  },
-  courseYear: {
-    type: String,
-    required: true,
-  },
-  content: {
-    type: String,
-    required: true,
-  },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
-  },
-})
+  {
+    timestamps: true,
+  }
+)
 
 export default mongoose.model("Notes", NotesSchema)

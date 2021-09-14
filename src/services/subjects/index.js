@@ -1,6 +1,7 @@
 import { Router } from "express"
 import createError from "http-errors"
 import SubjectModel from "../../models/subject/index.js"
+import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 
 const subjectsRouter = Router()
 
