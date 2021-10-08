@@ -1,10 +1,12 @@
 import { Router } from "express"
 import createError from "http-errors"
 import NotesModel from "../../models/notes/index.js"
+import UserModel from "../../models/user/index.js"
 import multer from "multer"
 import AWS from "aws-sdk"
 import { v4 as uuidv4 } from "uuid"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
+import { pipeline } from "stream"
 
 const notesRouter = Router()
 
@@ -12,6 +14,7 @@ notesRouter.post("/", JWTAuthMiddleware, async (req, res) => {
   try {
     const newNotes = new NotesModel(req.body)
     newNotes.author = req.user
+    newNotes.uni = req.user.uni
     const { _id } = await newNotes.save()
 
     res.status(201).send(_id)
@@ -70,7 +73,18 @@ notesRouter.get("/byAuthor/:id", JWTAuthMiddleware, async (req, res, next) => {
   try {
     const notes = await NotesModel.find({
       author: req.params.id,
-    })
+    }).populate([
+      {
+        path: "author",
+        populate: { path: "uni" },
+      },
+      {
+        path: "subject",
+      },
+      {
+        path: "course",
+      },
+    ])
     if (!notes) next(createError(404, `ID ${req.params.id} was not found`))
     else res.status(200).send(notes)
   } catch (error) {
@@ -85,7 +99,18 @@ notesRouter.get(
     try {
       const notes = await NotesModel.find({
         purchasedBy: req.params.id,
-      })
+      }).populate([
+        {
+          path: "author",
+          populate: { path: "uni" },
+        },
+        {
+          path: "subject",
+        },
+        {
+          path: "course",
+        },
+      ])
       if (!notes) next(createError(404, `ID ${req.params.id} was not found`))
       else res.status(200).send(notes)
     } catch (error) {
@@ -93,6 +118,31 @@ notesRouter.get(
     }
   }
 )
+
+notesRouter.post("/:id/purchase", JWTAuthMiddleware, async (req, res, next) => {
+  try {
+    const notes = await NotesModel.findById(req.params.id)
+    if (notes) {
+      const updatedNotes = await NotesModel.findByIdAndUpdate(
+        req.params.id,
+        {
+          $push: {
+            purchasedBy: req.user._id,
+          },
+        },
+        {
+          runValidators: true,
+          new: true,
+        }
+      )
+      res.status(201).send(updatedNotes)
+    } else {
+      next(createError(404, "notes not found"))
+    }
+  } catch (error) {
+    next(createError(500, "an error occurred while adding a purchaser"))
+  }
+})
 
 // ---------------upload/download notes pdf------------------
 
@@ -107,35 +157,41 @@ const storage = multer.memoryStorage({
   },
 })
 
-notesRouter.post("/upload", multer({ storage }).single("image"), (req, res) => {
-  let myFile = req.file.originalname.split(".")
-  const fileType = myFile[myFile.length - 1]
+notesRouter.post(
+  "/upload",
+  multer({ storage }).single("image"),
+  (req, res, next) => {
+    let myFile = req.file.originalname.split(".")
+    const fileType = myFile[myFile.length - 1]
 
-  const params = {
-    Bucket: process.env.AWS_BUCKET_NAME,
-    Key: `${uuidv4()}.${fileType}`,
-    Body: req.file.buffer,
-  }
-
-  s3.upload(params, (error, data) => {
-    if (error) {
-      res.status(500).send(error)
+    const params = {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: `${uuidv4()}.${fileType}`,
+      Body: req.file.buffer,
     }
 
-    res.status(200).send(data)
-  })
-})
+    s3.upload(params, (error, data) => {
+      if (error) {
+        res.status(500).send(error)
+      }
 
-notesRouter.get("/download/:key", (req, res) => {
+      res.status(200).send(data)
+    })
+  }
+)
+
+notesRouter.get("/download/:key", JWTAuthMiddleware, (req, res, next) => {
   try {
     const options = {
       Bucket: process.env.AWS_BUCKET_NAME,
       Key: req.params.key,
     }
     const fileStream = s3.getObject(options).createReadStream()
-    fileStream.pipe(res)
+    res.setHeader("Content-Disposition", "attachment; filename=export.pdf")
+    pipeline(fileStream, res, (err) => next(err))
   } catch (error) {
-    next(error)
+    console.log(error)
+    next(createError(500, "problems with notes download"))
   }
 })
 

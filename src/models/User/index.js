@@ -56,6 +56,13 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  comments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Comment",
+      default: [],
+    },
+  ],
 })
 
 UserSchema.pre("save", async function (next) {

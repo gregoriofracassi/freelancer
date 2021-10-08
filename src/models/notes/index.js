@@ -7,9 +7,19 @@ const NotesSchema = new mongoose.Schema(
       required: true,
       ref: "Course",
     },
+    uni: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Uni",
+    },
+    image: {
+      type: String,
+      default:
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/PDF_file_icon.svg/1667px-PDF_file_icon.svg.png",
+    },
     subject: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Course",
+      ref: "Subject",
     },
     contentKey: {
       type: String,
@@ -24,6 +34,9 @@ const NotesSchema = new mongoose.Schema(
         default: [],
       },
     ],
+    price: {
+      type: Number,
+    },
   },
   {
     timestamps: true,

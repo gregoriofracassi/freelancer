@@ -1,5 +1,5 @@
 import mongoose from "mongoose"
-import server from "./server.js"
+import socketServer, { server } from "./server.js"
 import list from "express-list-endpoints"
 
 const port = process.env.PORT || 3030
@@ -14,7 +14,7 @@ mongoose
   })
   .then(() => {
     console.log("Connected to mongo")
-    server.listen(port, () => {
+    socketServer.listen(port, () => {
       console.table(list(server))
       console.log("Server listening on port " + port)
     })

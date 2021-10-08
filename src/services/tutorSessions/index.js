@@ -1,7 +1,6 @@
 import { Router } from "express"
 import createError from "http-errors"
 import TutorSessionModel from "../../models/tutorSession/index.js"
-import { JWTAuthenticate } from "../../auth/tools.js"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 
 const tutorSessionsRouter = Router()
@@ -29,11 +28,13 @@ tutorSessionsRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
 })
 
 tutorSessionsRouter.get(
-  "/individual_session/:id",
+  "/specific/:id",
   JWTAuthMiddleware,
   async (req, res, next) => {
     try {
-      const tutorSession = await TutorSessionModel.findById(req.params.id)
+      const tutorSession = await TutorSessionModel.findById(
+        req.params.id
+      ).populate(["course", "tutor", "student", "subject"])
       if (!tutorSession)
         next(createError(404, `ID ${req.params.id} was not found`))
       else res.status(200).send(tutorSession)

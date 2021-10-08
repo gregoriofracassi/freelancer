@@ -67,6 +67,7 @@ usersRouter.get("/specific/:id", async (req, res, next) => {
       "course",
       "uni",
       "availableSubjects",
+      "comments",
     ])
     if (!user) next(createError(404, `ID ${req.params.id} was not found`))
     else res.status(200).send(user)
