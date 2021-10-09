@@ -27,11 +27,11 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
       result.subject = querySubject
       const usersWithSubj = await UserModel.find({
         availableSubjects: querySubject._id,
-      })
+      }).populate(["course", "uni"])
       if (usersWithSubj.length !== 0) {
         usersWithSubj.forEach((user) => {
           if (user._id.toString() !== req.user._id.toString()) {
-            if (user.uni.toString() === req.user.uni.toString()) {
+            if (user.uni._id.toString() === req.user.uni.toString()) {
               result.uni.sessions.push(user)
             } else {
               result.other.sessions.push(user)
@@ -42,11 +42,11 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
 
       const allNotes = await NotesModel.find({
         subject: querySubject._id,
-      })
+      }).populate(["author", "course", "uni"])
       if (allNotes.length !== 0) {
         allNotes.forEach((notes) => {
-          if (notes.author.toString() !== req.user._id.toString()) {
-            if (notes.uni.toString() === req.user.uni.toString()) {
+          if (notes.author._id.toString() !== req.user._id.toString()) {
+            if (notes.uni._id.toString() === req.user.uni.toString()) {
               result.uni.notes.push(notes)
             } else {
               result.other.notes.push(notes)
