@@ -24,6 +24,7 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
       subject: new RegExp(queryObj.criteria.key, "i"),
     })
     if (querySubject) {
+      result.subject = querySubject
       const usersWithSubj = await UserModel.find({
         availableSubjects: querySubject._id,
       })
@@ -61,11 +62,11 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
         { name: new RegExp(queryObj.criteria.key, "i") },
         { surname: new RegExp(queryObj.criteria.key, "i") },
       ],
-    })
+    }).populate(["uni"])
     if (allUsers.length !== 0) {
       allUsers.forEach((user) => {
         if (user._id.toString() !== req.user._id.toString()) {
-          if (user.uni === req.user.uni) {
+          if (user.uni._id.toString() === req.user.uni._id.toString()) {
             result.uni.users.push(user)
           } else {
             result.other.users.push(user)
