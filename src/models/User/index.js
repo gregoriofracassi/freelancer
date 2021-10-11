@@ -63,6 +63,20 @@ const UserSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  notesRatings: [
+    {
+      type: Number,
+      enum: [1, 2, 3, 4, 5],
+      default: [],
+    },
+  ],
+  tutorRatings: [
+    {
+      type: Number,
+      enum: [1, 2, 3, 4, 5],
+      default: [],
+    },
+  ],
 })
 
 UserSchema.pre("save", async function (next) {

@@ -46,21 +46,6 @@ usersRouter.get("/", async (req, res, next) => {
   }
 })
 
-// usersRouter.get("/search", JWTAuthMiddleware, async (req, res, next) => {
-//   console.log(req.query)
-//   const { username } = req.query
-//   try {
-//     const users = await UserModel.find({ username })
-
-//     if (users) {
-//       res.status(200).send(users)
-//     }
-//     res.send(createError(404, "No user found"))
-//   } catch (error) {
-//     next(error)
-//   }
-// })
-
 usersRouter.get("/specific/:id", async (req, res, next) => {
   try {
     const user = await UserModel.findById(req.params.id).populate([
@@ -119,6 +104,70 @@ usersRouter.delete("/:id", async (req, res, next) => {
     next(error)
   }
 })
+
+// -------- ratings --------
+
+usersRouter.post(
+  "/rateNotes/:id",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const rating = req.body
+      const user = await UserModel.findById(req.params.id)
+      if (user) {
+        const updatedUser = await UserModel.findByIdAndUpdate(
+          req.params.id,
+          {
+            $push: {
+              notesRatings: rating.rating,
+            },
+          },
+          {
+            runValidators: true,
+            new: true,
+          }
+        )
+        res.status(201).send(updatedUser)
+      } else {
+        next(createError(404, "user not found"))
+      }
+    } catch (error) {
+      next(createError(500, "an error occurred while adding a notes rating"))
+    }
+  }
+)
+
+usersRouter.post(
+  "/rateTutor/:id",
+  JWTAuthMiddleware,
+  async (req, res, next) => {
+    try {
+      const rating = req.body
+      const user = await UserModel.findById(req.params.id)
+      if (user) {
+        const updatedUser = await UserModel.findByIdAndUpdate(
+          req.params.id,
+          {
+            $push: {
+              tutorRatings: rating.rating,
+            },
+          },
+          {
+            runValidators: true,
+            new: true,
+          }
+        )
+        res.status(201).send(updatedUser)
+      } else {
+        next(createError(404, "user not found"))
+      }
+    } catch (error) {
+      next(createError(500, "an error occurred while adding a tutor rating"))
+    }
+  }
+)
+
+// ------- cloudinary -------
 
 const cloudinaryStorage = new CloudinaryStorage({
   cloudinary,
