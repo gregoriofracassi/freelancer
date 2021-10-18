@@ -1,10 +1,8 @@
 import { Router } from "express"
 import createError from "http-errors"
-import TutorSessionsModel from "../../models/tutorSession/index.js"
-import UniModel from "../../models/uni/index.js"
-import NotesModel from "../../models/notes/index.js"
-import UserModel from "../../models/user/index.js"
-import SubjectModel from "../../models/subject/index.js"
+import NotesModel from "../../_models/notes/index.js"
+import UserModel from "../../_models/user/index.js"
+import SubjectModel from "../../_models/subject/index.js"
 import q2m from "query-to-mongo"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 

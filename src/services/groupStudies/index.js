@@ -1,6 +1,6 @@
 import { Router } from "express"
 import createError from "http-errors"
-import GroupStudyModel from "../../models/GroupStudy/index.js"
+import GroupStudyModel from "../../_models/GroupStudy/index.js"
 import { JWTAuthenticate } from "../../auth/tools.js"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 

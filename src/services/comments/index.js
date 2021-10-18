@@ -1,7 +1,7 @@
 import { Router } from "express"
 import createError from "http-errors"
-import CommentModel from "../../models/comment/index.js"
-import UserModel from "../../models/user/index.js"
+import CommentModel from "../../_models/comment/index.js"
+import UserModel from "../../_models/user/index.js"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 
 const commentRouter = Router()

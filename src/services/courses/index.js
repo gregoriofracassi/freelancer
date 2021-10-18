@@ -1,6 +1,6 @@
 import { Router } from "express"
 import createError from "http-errors"
-import CourseModel from "../../models/course/index.js"
+import CourseModel from "../../_models/course/index.js"
 
 const courseRouter = Router()
 

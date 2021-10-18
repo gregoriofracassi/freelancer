@@ -1,6 +1,6 @@
 import { Router } from "express"
 import createError from "http-errors"
-import UserModel from "../../models/user/index.js"
+import UserModel from "../../_models/user/index.js"
 import { JWTAuthenticate } from "../../auth/tools.js"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 import multer from "multer"

@@ -1,6 +1,6 @@
 import { Router } from "express"
 import createError from "http-errors"
-import UniModel from "../../models/uni/index.js"
+import UniModel from "../../_models/uni/index.js"
 
 const uniRouter = Router()
 

@@ -1,6 +1,6 @@
 import { Router } from "express"
 import createError from "http-errors"
-import TutorSessionModel from "../../models/tutorSession/index.js"
+import TutorSessionModel from "../../_models/tutorSession/index.js"
 import { JWTAuthMiddleware } from "../../auth/middlewares.js"
 
 const tutorSessionsRouter = Router()
