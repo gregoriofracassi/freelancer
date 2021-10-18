@@ -62,7 +62,7 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
         { name: new RegExp(queryObj.criteria.key, "i") },
         { surname: new RegExp(queryObj.criteria.key, "i") },
       ],
-    }).populate(["uni"])
+    }).populate(["uni", "course"])
     if (allUsers.length !== 0) {
       allUsers.forEach((user) => {
         if (user._id.toString() !== req.user._id.toString()) {

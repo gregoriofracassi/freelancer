@@ -98,10 +98,26 @@ tutorSessionsRouter.put(
   "/book/:id",
   JWTAuthMiddleware,
   async (req, res, next) => {
+    const durations = [
+      "30m",
+      "1h",
+      "1h 30m",
+      "2h",
+      "2h 30m",
+      "3h",
+      "3h 30m",
+      "4h",
+    ]
     try {
       const updateTutorSession = await TutorSessionModel.findByIdAndUpdate(
         req.params.id,
-        { $set: { student: req.user, subject: req.body.subject } },
+        {
+          $set: {
+            student: req.user,
+            subject: req.body.subject,
+            duration: durations[req.body.duration - 1],
+          },
+        },
         {
           runValidators: true,
           new: true,

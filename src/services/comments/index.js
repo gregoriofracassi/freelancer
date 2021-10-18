@@ -11,7 +11,7 @@ commentRouter.post("/:id", JWTAuthMiddleware, async (req, res) => {
     const newComment = new CommentModel(req.body)
     newComment.author = req.user
     const { _id } = await newComment.save()
-    const updatedUserComments = await UserModel.findOneAndUpdate(
+    const updatedUserComments = await UserModel.findByIdAndUpdate(
       req.params.id,
       {
         $push: {
