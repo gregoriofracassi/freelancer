@@ -25,7 +25,7 @@ server.use(express.json())
 const socketServer = createServer(server)
 const io = new Server(socketServer, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://unihub-flax.vercel.app",
     methods: ["GET", "POST"],
   },
 })
