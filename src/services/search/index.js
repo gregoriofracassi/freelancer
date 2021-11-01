@@ -28,8 +28,8 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
       }).populate(["course", "uni"])
       if (usersWithSubj && usersWithSubj.length !== 0) {
         usersWithSubj.forEach((user) => {
-          if (user._id.toString() !== req.user._id.toString()) {
-            if (user.uni._id.toString() === req.user.uni.toString()) {
+          if (user._id.toString() !== req.user?._id.toString()) {
+            if (user.uni?._id.toString() === req.user.uni.toString()) {
               result.uni.sessions.push(user)
             } else {
               result.other.sessions.push(user)
@@ -39,12 +39,12 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
       }
 
       const allNotes = await NotesModel.find({
-        subject: querySubject._id,
+        subject: querySubject?._id,
       }).populate(["author", "course", "uni"])
       if (allNotes && allNotes.length !== 0) {
         allNotes.forEach((notes) => {
-          if (notes.author._id.toString() !== req.user._id.toString()) {
-            if (notes.uni._id.toString() === req.user.uni.toString()) {
+          if (notes.author?._id.toString() !== req.user?._id.toString()) {
+            if (notes.uni?._id.toString() === req.user.uni.toString()) {
               result.uni.notes.push(notes)
             } else {
               result.other.notes.push(notes)
@@ -63,8 +63,8 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
     }).populate(["uni", "course"])
     if (allUsers && allUsers.length !== 0) {
       allUsers.forEach((user) => {
-        if (user._id.toString() !== req.user._id.toString()) {
-          if (user.uni._id.toString() === req.user.uni._id.toString()) {
+        if (user._id.toString() !== req.user?._id.toString()) {
+          if (user.uni?._id.toString() === req.user.uni?._id.toString()) {
             result.uni.users.push(user)
           } else {
             result.other.users.push(user)
