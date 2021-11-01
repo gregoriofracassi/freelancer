@@ -26,7 +26,7 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
       const usersWithSubj = await UserModel.find({
         availableSubjects: querySubject._id,
       }).populate(["course", "uni"])
-      if (usersWithSubj.length !== 0) {
+      if (usersWithSubj && usersWithSubj.length !== 0) {
         usersWithSubj.forEach((user) => {
           if (user._id.toString() !== req.user._id.toString()) {
             if (user.uni._id.toString() === req.user.uni.toString()) {
@@ -41,7 +41,7 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
       const allNotes = await NotesModel.find({
         subject: querySubject._id,
       }).populate(["author", "course", "uni"])
-      if (allNotes.length !== 0) {
+      if (allNotes && allNotes.length !== 0) {
         allNotes.forEach((notes) => {
           if (notes.author._id.toString() !== req.user._id.toString()) {
             if (notes.uni._id.toString() === req.user.uni.toString()) {
@@ -61,7 +61,7 @@ searchRouter.get("/", JWTAuthMiddleware, async (req, res, next) => {
         { surname: new RegExp(queryObj.criteria.key, "i") },
       ],
     }).populate(["uni", "course"])
-    if (allUsers.length !== 0) {
+    if (allUsers && allUsers.length !== 0) {
       allUsers.forEach((user) => {
         if (user._id.toString() !== req.user._id.toString()) {
           if (user.uni._id.toString() === req.user.uni._id.toString()) {
