@@ -25,7 +25,7 @@ usersRouter.post("/login", async (req, res, next) => {
   }
 })
 
-usersRouter.post("/register", async (req, res) => {
+usersRouter.post("/register", async (req, res, next) => {
   try {
     const newUser = new UserModel(req.body)
     const { _id } = await newUser.save()
