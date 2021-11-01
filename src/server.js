@@ -19,7 +19,20 @@ import {
 } from "./errorHandlers.js"
 
 const server = express()
-server.use(cors())
+
+const whitelist = ["http://localhost:3000", "https://unihub-flax.vercel.app"]
+
+const corsOptions = {
+  origin: function (origin, next) {
+    if (!origin || whitelist.includes(origin)) {
+      next(null, true)
+    } else {
+      next(new Error("Origin is not supported!"))
+    }
+  },
+}
+
+server.use(cors(corsOptions))
 server.use(express.json())
 
 const socketServer = createServer(server)

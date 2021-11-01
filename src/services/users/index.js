@@ -33,7 +33,7 @@ usersRouter.post("/register", async (req, res) => {
     res.status(201).send(_id)
   } catch (error) {
     console.log(error)
-    next(createError(500, "An error occurred while saving new author"))
+    next(createError(500, "An error occurred while saving new user"))
   }
 })
 
